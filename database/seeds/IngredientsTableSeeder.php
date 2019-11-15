@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 
 class IngredientsTableSeeder extends Seeder
 {
@@ -14,6 +15,8 @@ class IngredientsTableSeeder extends Seeder
         DB::table('ingredients')->insert([
             'id' => 1,
             'slug' => '',
+            'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
 
         # id, food_id, title, locale, created_at, updated_at

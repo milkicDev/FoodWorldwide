@@ -15,11 +15,18 @@ class Food extends Model
     public $localeKey;
     public $fillable = ['title', 'food_id', 'category_id'];
 
-    public function category() {
-		return $this->belongsTo(Category::class);
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
-    // public function tag() {
-    //     return $this->hasMany(Tag::class, 'id');
-    // }
+    public function tag()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    public function ingredient()
+    {
+        return $this->belongsToMany(Ingredient::class);
+    }
 }

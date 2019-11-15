@@ -18,6 +18,7 @@ class AllTables extends Migration
             $table->increments('id');
             $table->string('slug')->unique();
             $table->timestamps();
+            $table->timestamp('delete_at')->nullable();
         });
 
         Schema::create('category_translations', function (Blueprint $table) {
@@ -26,6 +27,7 @@ class AllTables extends Migration
             $table->string('title');
             $table->string('locale')->index();
             $table->timestamps();
+            $table->timestamp('delete_at')->nullable();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
@@ -35,6 +37,7 @@ class AllTables extends Migration
             $table->increments('id');
             $table->string('slug')->unique();
             $table->timestamps();
+            $table->timestamp('delete_at')->nullable();
         });
 
         Schema::create('tag_translations', function (Blueprint $table) {
@@ -43,6 +46,7 @@ class AllTables extends Migration
             $table->string('title');
             $table->string('locale')->index();
             $table->timestamps();
+            $table->timestamp('delete_at')->nullable();
 
             $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
         });
@@ -52,6 +56,7 @@ class AllTables extends Migration
             $table->increments('id');
             $table->string('slug')->unique();
             $table->timestamps();
+            $table->timestamp('delete_at')->nullable();
         });
 
         Schema::create('ingredient_translations', function (Blueprint $table) {
@@ -60,6 +65,7 @@ class AllTables extends Migration
             $table->string('title');
             $table->string('locale')->index();
             $table->timestamps();
+            $table->timestamp('delete_at')->nullable();
 
             $table->foreign('ingredient_id')->references('id')->on('ingredients')->onDelete('cascade');
         });
@@ -68,10 +74,9 @@ class AllTables extends Migration
         Schema::create('foods', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('category_id')->unsigned();
-            $table->string('tags')->nullable(false);
-            $table->string('ingredients')->nullable(false);
             $table->string('slug')->unique();
             $table->timestamps();
+            $table->timestamp('delete_at')->nullable();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
@@ -82,8 +87,28 @@ class AllTables extends Migration
             $table->string('title');
             $table->string('locale')->index();
             $table->timestamps();
+            $table->timestamp('delete_at')->nullable();
 
             $table->foreign('food_id')->references('id')->on('foods')->onDelete('cascade');
+        });
+
+        // Tag & ingredient
+        Schema::create('food_tag', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('food_id')->unsigned();
+            $table->integer('tag_id')->unsigned();
+
+            $table->foreign('food_id')->references('id')->on('foods')->onDelete('cascade');
+            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+        });
+
+        Schema::create('food_ingredient', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('food_id')->unsigned();
+            $table->integer('ingredient_id')->unsigned();
+
+            $table->foreign('food_id')->references('id')->on('foods')->onDelete('cascade');
+            $table->foreign('ingredient_id')->references('id')->on('ingredients')->onDelete('cascade');
         });
     }
 

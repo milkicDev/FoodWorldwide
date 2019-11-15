@@ -11,12 +11,12 @@
 |
 */
 
-Route::get('/', function () { return redirect('en'); });
+// Route::get('/', function () { return redirect('en'); });
 Route::get('{locale}/', function ($locale) {
     App::setLocale($locale);
     return view('welcome');
 });
 
-Route::resource('{locale}/food', 'FoodController');
+// Route::resource('{locale}/food', 'FoodController');
 
-Route::get('{locale}/search', 'SearchController@filter');
+// Route::get('{locale}/search', 'SearchController@filter');

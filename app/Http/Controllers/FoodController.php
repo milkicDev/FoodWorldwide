@@ -16,12 +16,32 @@ class FoodController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($locale)
+    public function index(Request $request)
     {
-        App::setLocale($locale);
-        $Data = Food::with('category')->get();
+		if (ISSET($request->with)) {
+			$request->with = explode(',', $request->with);
+			$Data = Food::with($request->with);
+		} else {
+			$Data = Food::with('category', 'tag', 'ingredient');
+		}
 
-        return view('pages.food.index', compact('Data'));
+        if (ISSET($request->lang)) {
+            App::setLocale($request->lang);
+        } else {
+            App::setLocale('en');
+        }
+
+        if ($request->diff_time > 0) {
+			$request->diff_time = date('Y-m-d H:i:s', $request->diff_time);
+            $Data = $Data->where('created_at', $request->diff_time)
+                    ->orWhere('updated_at', $request->diff_time)
+                    // ->orWhere('delete_at', $request->diff_time)
+                    ->get();
+        } else {
+            $Data = $Data->get();
+        }
+
+        return response()->json($Data, 200);
     }
 
     /**
@@ -51,17 +71,17 @@ class FoodController extends Controller
      * @param  \App\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function show($locale, $id)
+    public function show(Request $request, $id)
     {
-        App::setLocale($locale);
-        $Data = Food::where('id', $id)->with('category')->first();
+		if (ISSET($request->lang)) {
+            App::setLocale($request->lang);
+        } else {
+            App::setLocale('en');
+        }
 
-        $Data->tags = explode(',', $Data->tags);
-        $Data->tag = Tag::whereIn('id', $Data->tags)->get();
-        $Data->ingredients = explode(',', $Data->ingredients);
-        $Data->ingredient = Ingredient::whereIn('id', $Data->ingredients)->get();
+        $Data = Food::where('id', $id)->with('category', 'tag', 'ingredient')->first();
 
-        return view('pages.food.show', compact('Data'));
+        return response()->json($Data, 200);
     }
 
     /**
